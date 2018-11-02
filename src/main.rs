@@ -1,10 +1,13 @@
-extern crate sdl2;
+use std::time::Duration;
 use std::path::Path;
 
+extern crate sdl2;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::rect::Rect;
-use std::time::Duration;
+
+const SCALE : u8 =   4;
+const WAIT  : u8 = 255;
 
 const SIZE_TILE  : (u8, u8) = ( 4, 4);
 const SIZE_WORLD : (u8, u8) = (16, 8);
@@ -32,17 +35,14 @@ const SPRITE_APPLE             : (u8, u8) = (7, 0);
 const SPRITE_ROCK              : (u8, u8) = (7, 1);
 
 fn main() {
-	let scale : u8 =   4;
-	let wait  : u8 = 255;
-
+	let mut length : u8 = 3;
+	let mut position : (i8, i8) = (7, 3);
 	let mut direction = DIR_RIGHT;
-
-	let mut position : (i8, i8) = (0, 0);
 	let mut sprite = SPRITE_HEAD_RIGHT;
 
 	let size_screen: (u16, u16) = (
-		SIZE_TILE.0 as u16 * SIZE_WORLD.0 as u16 * scale as u16,
-		SIZE_TILE.1 as u16 * SIZE_WORLD.1 as u16 * scale as u16,
+		SIZE_TILE.0 as u16 * SIZE_WORLD.0 as u16 * SCALE as u16,
+		SIZE_TILE.1 as u16 * SIZE_WORLD.1 as u16 * SCALE as u16,
 	);
 
 	let sdl_context = sdl2::init().unwrap();
@@ -59,7 +59,7 @@ fn main() {
 	let texture = texture_creator.create_texture_from_surface(&temp_surface).unwrap();
 
 	let mut rect_source = Rect::new((sprite.0 * SIZE_TILE.0) as i32, (sprite.1 * SIZE_TILE.1) as i32, SIZE_TILE.0 as u32, SIZE_TILE.1 as u32);
-	let mut rect_dest   = Rect::new(0, 0, (SIZE_TILE.0 * scale) as u32, (SIZE_TILE.0 * scale) as u32);
+	let mut rect_dest   = Rect::new(0, 0, (SIZE_TILE.0 * SCALE) as u32, (SIZE_TILE.0 * SCALE) as u32);
 
 	let mut running = true;
 	while running {
@@ -80,13 +80,13 @@ fn main() {
 		position.1 = if (position.1 + direction.1) < 0 { SIZE_WORLD.1 as i8 - 1 } else { (position.1 + direction.1) % SIZE_WORLD.1 as i8 };
 		rect_source.set_x( (sprite.0 * SIZE_TILE.0) as i32 );
 		rect_source.set_y( (sprite.1 * SIZE_TILE.1) as i32 );
-		rect_dest.set_x(position.0 as i32 * scale as i32 * SIZE_TILE.0 as i32);
-		rect_dest.set_y(position.1 as i32 * scale as i32 * SIZE_TILE.1 as i32);
+		rect_dest.set_x(position.0 as i32 * SCALE as i32 * SIZE_TILE.0 as i32);
+		rect_dest.set_y(position.1 as i32 * SCALE as i32 * SIZE_TILE.1 as i32);
 
 		canvas.clear();
 		canvas.copy_ex(&texture, Some(rect_source), Some(rect_dest), 0.0, None, false, false).unwrap();
 		canvas.present();
 
-		std::thread::sleep(Duration::from_millis(wait as u64));
+		std::thread::sleep(Duration::from_millis(WAIT as u64));
 	}
 }
