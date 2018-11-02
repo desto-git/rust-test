@@ -38,7 +38,7 @@ fn main() {
 	let mut direction = DIR_RIGHT;
 
 	let mut position : (i8, i8) = (0, 0);
-	let sprite = SPRITE_HEAD_RIGHT;
+	let mut sprite = SPRITE_HEAD_RIGHT;
 
 	let size_screen: (u16, u16) = (
 		SIZE_TILE.0 as u16 * SIZE_WORLD.0 as u16 * scale as u16,
@@ -68,16 +68,18 @@ fn main() {
 					Event::Quit {..} | Event::KeyDown {keycode: Some(Keycode::Escape), ..} => {
 						running = false;
 					},
-					Event::KeyDown {keycode: Some( Keycode::Up    ), ..} => { direction = DIR_UP;    },
-					Event::KeyDown {keycode: Some( Keycode::Down  ), ..} => { direction = DIR_DOWN;  },
-					Event::KeyDown {keycode: Some( Keycode::Left  ), ..} => { direction = DIR_LEFT;  },
-					Event::KeyDown {keycode: Some( Keycode::Right ), ..} => { direction = DIR_RIGHT; },
+					Event::KeyDown {keycode: Some( Keycode::Up    ), ..} => { direction = DIR_UP;    sprite = SPRITE_HEAD_UP;    },
+					Event::KeyDown {keycode: Some( Keycode::Down  ), ..} => { direction = DIR_DOWN;  sprite = SPRITE_HEAD_DOWN;  },
+					Event::KeyDown {keycode: Some( Keycode::Left  ), ..} => { direction = DIR_LEFT;  sprite = SPRITE_HEAD_LEFT;  },
+					Event::KeyDown {keycode: Some( Keycode::Right ), ..} => { direction = DIR_RIGHT; sprite = SPRITE_HEAD_RIGHT; },
 					_ => {}
 			}
 		}
 
-		position.0 = (position.0 + direction.0) % SIZE_WORLD.0 as i8;
-		position.1 = (position.1 + direction.1) % SIZE_WORLD.1 as i8;
+		position.0 = if (position.0 + direction.0) < 0 { SIZE_WORLD.0 as i8 - 1 } else { (position.0 + direction.0) % SIZE_WORLD.0 as i8 };
+		position.1 = if (position.1 + direction.1) < 0 { SIZE_WORLD.1 as i8 - 1 } else { (position.1 + direction.1) % SIZE_WORLD.1 as i8 };
+		rect_source.set_x( (sprite.0 * SIZE_TILE.0) as i32 );
+		rect_source.set_y( (sprite.1 * SIZE_TILE.1) as i32 );
 		rect_dest.set_x(position.0 as i32 * scale as i32 * SIZE_TILE.0 as i32);
 		rect_dest.set_y(position.1 as i32 * scale as i32 * SIZE_TILE.1 as i32);
 
