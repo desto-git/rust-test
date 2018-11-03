@@ -5,6 +5,10 @@ extern crate sdl2;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::rect::Rect;
+use sdl2::image::LoadTexture;
+
+const TITLE: &str = "snake.rs";
+const SPRITESHEET: &str = "assets/spritesheet.png";
 
 const SCALE : u8 =   4;
 const WAIT  : u8 = 255;
@@ -47,16 +51,14 @@ fn main() {
 
 	let sdl_context = sdl2::init().unwrap();
 	let video_subsystem = sdl_context.video().unwrap();
-	let window = video_subsystem.window("Snake!?", size_screen.0 as u32, size_screen.1 as u32).position_centered().build().unwrap();
+
+	let window = video_subsystem.window(TITLE, size_screen.0 as u32, size_screen.1 as u32).position_centered().build().unwrap();
 	let mut canvas = window.into_canvas().accelerated().build().unwrap();
 	let texture_creator = canvas.texture_creator();
-
+	let texture = texture_creator.load_texture(Path::new(SPRITESHEET)).unwrap();
 	canvas.set_draw_color(sdl2::pixels::Color::RGB(0,0,0));
 
 	let mut event_pump = sdl_context.event_pump().unwrap();
-
-	let temp_surface = sdl2::surface::Surface::load_bmp(Path::new("assets/spritesheet.bmp")).unwrap();
-	let texture = texture_creator.create_texture_from_surface(&temp_surface).unwrap();
 
 	let mut rect_source = Rect::new((sprite.0 * SIZE_TILE.0) as i32, (sprite.1 * SIZE_TILE.1) as i32, SIZE_TILE.0 as u32, SIZE_TILE.1 as u32);
 	let mut rect_dest   = Rect::new(0, 0, (SIZE_TILE.0 * SCALE) as u32, (SIZE_TILE.0 * SCALE) as u32);
