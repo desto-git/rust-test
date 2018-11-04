@@ -5,10 +5,12 @@ extern crate sdl2;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::rect::Rect;
+use sdl2::pixels::Color;
 use sdl2::image::LoadTexture;
 
-const TITLE: &str = "snake.rs";
-const SPRITESHEET: &str = "assets/spritesheet.png";
+const TITLE       : &str = "snake.rs";
+const SPRITESHEET : &str = "assets/spritesheet.png";
+const FONT        : &str = "assets/fnt/4Mono.ttf";
 
 const SCALE : u8 =   4;
 const WAIT  : u8 = 255;
@@ -52,16 +54,20 @@ fn main() {
 	let sdl_context = sdl2::init().unwrap();
 	let video_subsystem = sdl_context.video().unwrap();
 
+	let ttf_context = sdl2::ttf::init().unwrap();
+	let font = ttf_context.load_font(FONT, 48).unwrap();
+
 	let window = video_subsystem.window(TITLE, size_screen.0 as u32, size_screen.1 as u32).position_centered().build().unwrap();
 	let mut canvas = window.into_canvas().accelerated().build().unwrap();
 	let texture_creator = canvas.texture_creator();
 	let texture = texture_creator.load_texture(Path::new(SPRITESHEET)).unwrap();
-	canvas.set_draw_color(sdl2::pixels::Color::RGB(0,0,0));
+	canvas.set_draw_color(Color::RGB(0,0,0));
 
 	let mut event_pump = sdl_context.event_pump().unwrap();
 
 	let mut rect_source = Rect::new((sprite.0 * SIZE_TILE.0) as i32, (sprite.1 * SIZE_TILE.1) as i32, SIZE_TILE.0 as u32, SIZE_TILE.1 as u32);
 	let mut rect_dest   = Rect::new(0, 0, (SIZE_TILE.0 * SCALE) as u32, (SIZE_TILE.0 * SCALE) as u32);
+	let mut rect_font   = Rect::new(0, -20, 0, 0);
 
 	let mut running = true;
 	while running {
@@ -86,7 +92,17 @@ fn main() {
 		rect_dest.set_y(position.1 as i32 * SCALE as i32 * SIZE_TILE.1 as i32);
 
 		canvas.clear();
+
+		let font_surface = font.render("Score:0").solid(Color::RGB(63, 63, 63)).unwrap();
+
+		let font_texture = texture_creator.create_texture_from_surface(&font_surface).unwrap();
+		let font_query = font_texture.query();
+		rect_font.set_width ( font_query.width  );
+		rect_font.set_height( font_query.height );
+
 		canvas.copy_ex(&texture, Some(rect_source), Some(rect_dest), 0.0, None, false, false).unwrap();
+		canvas.copy(&font_texture, None, Some(rect_font)).unwrap();
+
 		canvas.present();
 
 		std::thread::sleep(Duration::from_millis(WAIT as u64));

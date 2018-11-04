@@ -6,4 +6,4 @@ authors = ["desto"]
 [dependencies.sdl2]
 version = "0.31"
 default-features = false
-features = ["image"] # "gfx","mixer","ttf"
+features = ["image","ttf"] # "gfx","mixer"

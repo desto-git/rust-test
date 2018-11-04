@@ -1,5 +1,5 @@
-Minimal4Mono.ttf
-----------------
+4Mono.ttf
+---------
 
 based on:
 
