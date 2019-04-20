@@ -8,6 +8,8 @@ use sdl2::rect::Rect;
 use sdl2::pixels::Color;
 use sdl2::image::LoadTexture;
 
+mod window;
+
 const TITLE       : &str = "snake.rs";
 const SPRITESHEET : &str = "assets/spritesheet.png";
 const FONT        : &str = "assets/fnt/4Mono.ttf";
@@ -52,16 +54,14 @@ fn main() {
 	);
 
 	let sdl_context = sdl2::init().unwrap();
-	let video_subsystem = sdl_context.video().unwrap();
 
 	let ttf_context = sdl2::ttf::init().unwrap();
 	let font = ttf_context.load_font(FONT, 48).unwrap();
 
-	let window = video_subsystem.window(TITLE, size_screen.0 as u32, size_screen.1 as u32).position_centered().build().unwrap();
-	let mut canvas = window.into_canvas().accelerated().build().unwrap();
+	let window = window::Window::new(&sdl_context, TITLE, (size_screen.0, size_screen.1));
+	let mut canvas = window.get_canvas();
 	let texture_creator = canvas.texture_creator();
 	let texture = texture_creator.load_texture(Path::new(SPRITESHEET)).unwrap();
-	canvas.set_draw_color(Color::RGB(0,0,0));
 
 	let mut event_pump = sdl_context.event_pump().unwrap();
 
