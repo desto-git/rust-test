@@ -1,4 +1,5 @@
 use std::time::Duration;
+use std::time::Instant;
 use std::path::Path;
 
 extern crate sdl2;
@@ -69,7 +70,9 @@ fn main() {
 	let mut rect_dest   = Rect::new(0, 0, (SIZE_TILE.0 * SCALE) as u32, (SIZE_TILE.0 * SCALE) as u32);
 	let mut rect_font   = Rect::new(0, -20, 0, 0);
 
-	let mut running = true;
+	let mut running   = true;
+	let wait_duration = Duration::from_millis(WAIT as u64);
+	let mut timestamp = Instant::now();
 	while running {
 		for event in event_pump.poll_iter() {
 			match event {
@@ -82,6 +85,11 @@ fn main() {
 					Event::KeyDown {keycode: Some( Keycode::Right ), ..} => { direction = DIR_RIGHT; sprite = SPRITE_HEAD_RIGHT; },
 					_ => {}
 			}
+		}
+
+		if timestamp.elapsed() < wait_duration {
+			std::thread::sleep(Duration::from_millis(10)); // no need to update half a million times a second
+			continue;
 		}
 
 		position.0 = if (position.0 + direction.0) < 0 { SIZE_WORLD.0 as i8 - 1 } else { (position.0 + direction.0) % SIZE_WORLD.0 as i8 };
@@ -105,6 +113,6 @@ fn main() {
 
 		canvas.present();
 
-		std::thread::sleep(Duration::from_millis(WAIT as u64));
+		timestamp = Instant::now();
 	}
 }
