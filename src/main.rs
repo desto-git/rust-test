@@ -70,14 +70,13 @@ fn main() {
 	let mut rect_dest   = Rect::new(0, 0, (SIZE_TILE.0 * SCALE) as u32, (SIZE_TILE.0 * SCALE) as u32);
 	let mut rect_font   = Rect::new(0, -20, 0, 0);
 
-	let mut running   = true;
 	let wait_duration = Duration::from_millis(WAIT as u64);
 	let mut timestamp = Instant::now();
-	while running {
+	'gameloop: loop {
 		for event in event_pump.poll_iter() {
 			match event {
 					Event::Quit {..} | Event::KeyDown {keycode: Some(Keycode::Escape), ..} => {
-						running = false;
+						break 'gameloop;
 					},
 					Event::KeyDown {keycode: Some( Keycode::Up    ), ..} => { direction = DIR_UP;    sprite = SPRITE_HEAD_UP;    },
 					Event::KeyDown {keycode: Some( Keycode::Down  ), ..} => { direction = DIR_DOWN;  sprite = SPRITE_HEAD_DOWN;  },
