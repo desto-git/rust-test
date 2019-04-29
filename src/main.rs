@@ -50,16 +50,16 @@ fn main() {
 	let mut sprite = SPRITE_HEAD_RIGHT;
 
 	let size_screen: (u16, u16) = (
-		SIZE_TILE.0 as u16 * SIZE_WORLD.0 as u16 * SCALE as u16,
-		SIZE_TILE.1 as u16 * SIZE_WORLD.1 as u16 * SCALE as u16,
+		SIZE_TILE.0 as u16 * SIZE_WORLD.0 as u16,
+		SIZE_TILE.1 as u16 * SIZE_WORLD.1 as u16,
 	);
 
 	let sdl_context = sdl2::init().unwrap();
 
 	let ttf_context = sdl2::ttf::init().unwrap();
-	let font = ttf_context.load_font(FONT, 48).unwrap();
+	let font = ttf_context.load_font(FONT, 14).unwrap();
 
-	let window = window::Window::new(&sdl_context, TITLE, (size_screen.0, size_screen.1));
+	let window = window::Window::new(&sdl_context, TITLE, (size_screen.0, size_screen.1), SCALE);
 	let mut canvas = window.get_canvas();
 	let texture_creator = canvas.texture_creator();
 	let texture = texture_creator.load_texture(Path::new(SPRITESHEET)).unwrap();
@@ -67,8 +67,8 @@ fn main() {
 	let mut event_pump = sdl_context.event_pump().unwrap();
 
 	let mut rect_source = Rect::new((sprite.0 * SIZE_TILE.0) as i32, (sprite.1 * SIZE_TILE.1) as i32, SIZE_TILE.0 as u32, SIZE_TILE.1 as u32);
-	let mut rect_dest   = Rect::new(0, 0, (SIZE_TILE.0 * SCALE) as u32, (SIZE_TILE.0 * SCALE) as u32);
-	let mut rect_font   = Rect::new(0, -20, 0, 0);
+	let mut rect_dest   = Rect::new(0, 0, SIZE_TILE.0 as u32, SIZE_TILE.0 as u32);
+	let mut rect_font   = Rect::new(0, -6, 0, 0);
 
 	let wait_duration = Duration::from_millis(WAIT as u64);
 	let mut timestamp = Instant::now();
@@ -95,8 +95,8 @@ fn main() {
 		position.1 = if (position.1 + direction.1) < 0 { SIZE_WORLD.1 as i8 - 1 } else { (position.1 + direction.1) % SIZE_WORLD.1 as i8 };
 		rect_source.set_x( (sprite.0 * SIZE_TILE.0) as i32 );
 		rect_source.set_y( (sprite.1 * SIZE_TILE.1) as i32 );
-		rect_dest.set_x(position.0 as i32 * SCALE as i32 * SIZE_TILE.0 as i32);
-		rect_dest.set_y(position.1 as i32 * SCALE as i32 * SIZE_TILE.1 as i32);
+		rect_dest.set_x(position.0 as i32 * SIZE_TILE.0 as i32);
+		rect_dest.set_y(position.1 as i32 * SIZE_TILE.1 as i32);
 
 		canvas.clear();
 
