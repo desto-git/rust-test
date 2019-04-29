@@ -1,27 +1,24 @@
 use sdl2::pixels::Color;
 use sdl2::render::WindowCanvas;
 use sdl2::Sdl;
+use types::Dimension;
 
 pub struct Window {
-	title: &'static str,
-	size: (u16, u16),
 	scale: u8,
 
 	sdl_window: sdl2::video::Window,
 }
 
 impl Window {
-	pub fn new( sdl_context: &Sdl, title: &'static str, size: (u16, u16), scale: u8 ) -> Window {
+	pub fn new( sdl_context: &Sdl, title: &'static str, size: Dimension<u16>, scale: u8 ) -> Window {
 		let sdl_video = sdl_context.video().unwrap();
 		let physical_size = (
-			size.0 as u32 * scale as u32,
-			size.1 as u32 * scale as u32
+			size.w as u32 * scale as u32,
+			size.h as u32 * scale as u32,
 		);
 		let sdl_window = sdl_video.window(title, physical_size.0, physical_size.1).position_centered().build().unwrap();
 
 		Window {
-			title: title,
-			size: size,
 			scale: scale,
 			sdl_window: sdl_window,
 		}

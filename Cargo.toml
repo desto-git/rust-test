@@ -1,5 +1,5 @@
 [package]
-name = "sdl-test"
+name = "snake-rs"
 version = "0.1.0"
 authors = ["desto"]
 
