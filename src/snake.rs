@@ -1,13 +1,14 @@
 use types::*;
+use traits::*;
 use SIZE_WORLD;
 
 pub struct Snake {
 	direction: Direction,
-	head_position: Coordinate,
+	head_position: Coordinate<u8>,
 }
 
 impl Snake {
-	pub fn new( position: Coordinate, direction: Direction ) -> Snake {
+	pub fn new( position: Coordinate<u8>, direction: Direction ) -> Snake {
 		Snake {
 			direction: direction,
 			head_position: position,
@@ -15,24 +16,40 @@ impl Snake {
 	}
 
 	pub fn update( &mut self ){
+		let mut pos = Coordinate {
+			x: self.head_position.x as i8,
+			y: self.head_position.y as i8,
+		};
+
 		match self.direction {
-			Direction::Up    => { self.head_position.y -= 1; },
-			Direction::Down  => { self.head_position.y += 1; },
-			Direction::Left  => { self.head_position.x -= 1; },
-			Direction::Right => { self.head_position.x += 1; },
+			Direction::Up    => { pos.y -= 1; },
+			Direction::Down  => { pos.y += 1; },
+			Direction::Left  => { pos.x -= 1; },
+			Direction::Right => { pos.x += 1; },
 		}
-		let pos = self.head_position;
+
 		self.head_position = Coordinate {
-			x: if pos.x < 0 { SIZE_WORLD.w as i8 - 1 } else { pos.x % SIZE_WORLD.w as i8 },
-			y: if pos.y < 0 { SIZE_WORLD.h as i8 - 1 } else { pos.y % SIZE_WORLD.h as i8 },
+			x: if pos.x < 0 { SIZE_WORLD.w - 1 } else { pos.x as u8 % SIZE_WORLD.w },
+			y: if pos.y < 0 { SIZE_WORLD.h - 1 } else { pos.y as u8 % SIZE_WORLD.h },
 		};
 	}
 
 	pub fn set_direction( &mut self, direction: Direction ){
 		self.direction = direction;
 	}
+}
 
-	pub fn get_position( &self ) -> Coordinate {
+impl Drawable for Snake {
+	fn get_position( &self ) -> Coordinate<u8> {
 		self.head_position
+	}
+
+	fn get_sprite( &self ) -> Coordinate<u8> {
+		match self.direction {
+			Direction::Up    => { Coordinate { x: 0, y: 0 } },
+			Direction::Down  => { Coordinate { x: 0, y: 1 } },
+			Direction::Left  => { Coordinate { x: 1, y: 0 } },
+			Direction::Right => { Coordinate { x: 1, y: 1 } },
+		}
 	}
 }
