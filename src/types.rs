@@ -1,6 +1,6 @@
 pub enum Direction { Up, Down, Left, Right }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub struct Coordinate<T> { pub x: T, pub y: T }
 
 #[derive(Clone, Copy)]

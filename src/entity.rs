@@ -13,6 +13,10 @@ impl Entity {
 			sprite: sprite,
 		}
 	}
+
+	pub fn set_position( &mut self, position: Coordinate<u8> ){
+		self.position = position;
+	}
 }
 
 impl Drawable for Entity {
